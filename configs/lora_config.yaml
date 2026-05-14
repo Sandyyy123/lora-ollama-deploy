@@ -1,0 +1,35 @@
+# LoRA fine-tuning configuration
+# Edit these values for your model and dataset
+
+# Base model (HuggingFace model ID or local path)
+model_name: "meta-llama/Meta-Llama-3-8B-Instruct"
+
+# Use QLoRA (4-bit base model + LoRA adapters) — recommended for GPUs < 24GB
+use_qlora: true
+
+# LoRA hyperparameters
+lora_r: 16           # rank — higher = more capacity, more VRAM
+lora_alpha: 32       # scaling = lora_alpha / lora_r
+lora_dropout: 0.05
+target_modules:
+  - q_proj
+  - v_proj
+  - k_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+
+# Dataset
+dataset:
+  path: "data/train.jsonl"    # local JSONL or HuggingFace dataset ID
+  text_column: "text"          # column containing formatted training text
+  split: "train"
+
+# Training
+output_dir: "output/lora-merged"
+epochs: 3
+batch_size: 4
+grad_accum: 4            # effective batch size = batch_size * grad_accum
+learning_rate: 0.0002
+max_seq_length: 2048
